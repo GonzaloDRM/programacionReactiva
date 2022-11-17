@@ -1,5 +1,6 @@
 package com.springboot.reactor;
 
+import com.springboot.reactor.model.Usuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -17,17 +18,22 @@ public class ReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Flux nombres = Flux.just("Andres", "Pedro", "Maria","Diego", "Juan")
-				.doOnNext(e -> {
-					if (e.isEmpty()){
+		Flux<Usuario> nombres = Flux.just("Andres", "Pedro", "","Diego", "Juan")
+				.map(nombre -> new Usuario(nombre.toUpperCase(), null))
+				.doOnNext(usuario -> {
+					if (usuario == null){
 						throw new RuntimeException("Los nombres no pueden estar vacios");
 					}
-					System.out.println(e);
+					System.out.println(usuario);
 
+				})
+				.map(usuario -> {
+					String nombre = usuario.getNombre().toLowerCase();
+					return usuario;
 				});
 
-		nombres.subscribe(e -> log.info(e.toString()),
-				error -> log.error(error.toString()),
+		nombres.subscribe(e -> log.info(e.getNombre()),
+				error -> log.error(error.getMessage()),
 				new Runnable() {
 					@Override
 					public void run() {
