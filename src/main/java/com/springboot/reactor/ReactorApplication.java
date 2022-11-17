@@ -18,13 +18,14 @@ public class ReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Flux<Usuario> nombres = Flux.just("Andres", "Pedro", "","Diego", "Juan")
-				.map(nombre -> new Usuario(nombre.toUpperCase(), null))
+		Flux<Usuario> nombres = Flux.just("Andres Guzman", "Pedro Fulano", "Mania Fulana","Diego Sultano", "Juan Mengano", "Bruce Lee", "Bruce Willis")
+				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
+				.filter(usuario -> {return usuario.getNombre().toLowerCase().equals("bruce");})
 				.doOnNext(usuario -> {
 					if (usuario == null){
 						throw new RuntimeException("Los nombres no pueden estar vacios");
 					}
-					System.out.println(usuario);
+					System.out.println(usuario.getNombre().concat(" ").concat(usuario.getAopellido()));
 
 				})
 				.map(usuario -> {
