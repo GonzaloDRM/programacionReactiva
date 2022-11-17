@@ -17,7 +17,7 @@ public class ReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Flux nombres = Flux.just("Andres", "Pedro", "","Diego", "Juan")
+		Flux nombres = Flux.just("Andres", "Pedro", "Maria","Diego", "Juan")
 				.doOnNext(e -> {
 					if (e.isEmpty()){
 						throw new RuntimeException("Los nombres no pueden estar vacios");
@@ -27,7 +27,13 @@ public class ReactorApplication implements CommandLineRunner {
 				});
 
 		nombres.subscribe(e -> log.info(e.toString()),
-				error -> log.error(error.toString()));
+				error -> log.error(error.toString()),
+				new Runnable() {
+					@Override
+					public void run() {
+						log.info("Finalizo la ejecucion con exito");
+					}
+				});
 
 	}
 }
