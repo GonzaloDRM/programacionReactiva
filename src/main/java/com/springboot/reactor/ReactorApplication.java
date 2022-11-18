@@ -8,6 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class ReactorApplication implements CommandLineRunner {
 
@@ -18,8 +21,19 @@ public class ReactorApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Flux<Usuario> nombres = Flux.just("Andres Guzman", "Pedro Fulano", "Mania Fulana","Diego Sultano", "Juan Mengano", "Bruce Lee", "Bruce Willis")
-				.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
+
+		List<String> usuariosList = new ArrayList<>();
+		usuariosList.add("Andres Guzman");
+		usuariosList.add("Pedro Fulano");
+		usuariosList.add("Mania Fulana");
+		usuariosList.add("Diego Sultano");
+		usuariosList.add("Juan Mengano");
+		usuariosList.add("Bruce Lee");
+		usuariosList.add("Bruce Willis");
+
+		Flux<String> nombres = Flux.fromIterable(usuariosList); //Flux.just("Andres Guzman", "Pedro Fulano", "Mania Fulana","Diego Sultano", "Juan Mengano", "Bruce Lee", "Bruce Willis");
+
+		Flux<Usuario> usuarios = nombres.map(nombre -> new Usuario(nombre.split(" ")[0].toUpperCase(), nombre.split(" ")[1].toUpperCase()))
 				.filter(usuario -> {return usuario.getNombre().toLowerCase().equals("bruce");})
 				.doOnNext(usuario -> {
 					if (usuario == null){
@@ -33,7 +47,7 @@ public class ReactorApplication implements CommandLineRunner {
 					return usuario;
 				});
 
-		nombres.subscribe(e -> log.info(e.getNombre()),
+		usuarios.subscribe(e -> log.info(e.getNombre()),
 				error -> log.error(error.getMessage()),
 				new Runnable() {
 					@Override
